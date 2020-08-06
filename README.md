@@ -4,7 +4,10 @@ Taggle
 The Customizable wrapper for PyTorch training loop and The helper function for getting major criterion, computer vision model, optimizer
 
 ## Intstallation
-using pip:  
+Clone:
+`$ git clone --recursive https://github.com/tattaka/Taggle.git`
+
+Using pip:  
 `$ cd Taggle`  
 `$ pip install .`
 
@@ -121,5 +124,5 @@ criterions = get_losses_dict(config["loss_fn"])
 ```
 
 ## License
-Project is distributed under [MIT License](https://github.com/tattaka/Taggle/blob/master/LICENSE)
+Project is distributed under [MIT License](https://github.com/tattaka/Taggle/blob/master/LICENSE).  
 This software includes the work that is distributed in the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
