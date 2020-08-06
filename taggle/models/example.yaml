@@ -1,0 +1,85 @@
+model:
+    backbone: 
+        type: resnet18
+        params:
+            backbone_weights: imagenet
+    heads:
+        output1: 
+            type: SimpleHead
+            params:
+                num_class: 16
+        output2: 
+            type: SpatiallyAttentiveOutputHead
+            params:
+                num_class: 9
+        output3: 
+            type: JPUHead
+            params:
+                num_class: 10
+                metric_branch: True
+        output4: 
+            type: FastFCNHead
+            params:
+                num_class: 10
+        output5: 
+            type: FastFCNImproveHead
+            params:
+                num_class: 10
+        output6: 
+            type: FPNHead
+            params:
+                num_class: 10
+        output7: 
+            type: LinkNetHead
+            params:
+                num_class: 10
+        output8: 
+            type: RefineNetHead
+            params:
+                input_shape: 128
+                num_class: 10
+        output9: 
+            type: RefineNetPoolingImproveHead
+            params:
+                input_shape: 128
+                num_class: 10
+        output10: 
+            type: UNetHead
+            params:
+                num_class: 10
+        output11: 
+            type: HyperColumnsHead
+            params:
+                num_class: 10
+        output12:
+            type: PSPNetHead
+            params:
+                num_class: 10
+        output13:
+            type: UNetHead
+            params:
+                num_class: 10
+                center: normal
+        output14:
+            type: UNetHead
+            params:
+                num_class: 10
+                center: aspp
+        output15:
+            type: UNetHead
+            params:
+                num_class: 10
+                center: fpa
+        output16:
+            type: UNetHead
+            params:
+                num_class: 10
+                attention_type: cbam
+        output16:
+            type: UNetHead
+            params:
+                num_class: 10
+                attention_type: scse
+                
+    mid_activation: Swish
+        
