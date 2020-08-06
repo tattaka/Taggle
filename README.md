@@ -4,7 +4,7 @@ Taggle
 The Customizable wrapper for PyTorch training loop and The helper function for getting major criterion, computer vision model, optimizer
 
 ## Intstallation
-Clone:
+Clone:  
 `$ git clone --recursive https://github.com/tattaka/Taggle.git`
 
 Using pip:  
