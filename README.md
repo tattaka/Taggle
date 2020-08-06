@@ -18,7 +18,7 @@ sys.path.append('/YOUR_DOWNLOAD_PATH/Taggle')
 
 ## Features
 
-### `Engine` (wrapper class for training loop)
+### `Engine` (Wrapper class for training loop)
 Implement only process specific to task as below:
 
 ```python
