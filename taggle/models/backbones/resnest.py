@@ -461,7 +461,7 @@ resnest_backbones = {
     },
     'resnest50_fast_2s1x64d': {
         'backbone': ResNeStBackbone,
-        'pretrained_settings': _get_pretrained_settings('resnest50_fast_1s1x64d'),
+        'pretrained_settings': _get_pretrained_settings('resnest50_fast_2s1x64d'),
         'out_shapes': (2048, 1024, 512, 256, 64),
         'params': {
             'block': Bottleneck,
@@ -479,7 +479,7 @@ resnest_backbones = {
     },
     'resnest50_fast_4s1x64d': {
         'backbone': ResNeStBackbone,
-        'pretrained_settings': _get_pretrained_settings('resnest50_fast_1s1x64d'),
+        'pretrained_settings': _get_pretrained_settings('resnest50_fast_4s1x64d'),
         'out_shapes': (2048, 1024, 512, 256, 64),
         'params': {
             'block': Bottleneck,
@@ -497,7 +497,7 @@ resnest_backbones = {
     },
     'resnest50_fast_1s2x40d': {
         'backbone': ResNeStBackbone,
-        'pretrained_settings': _get_pretrained_settings('resnest50_fast_1s1x64d'),
+        'pretrained_settings': _get_pretrained_settings('resnest50_fast_1s2x40d'),
         'out_shapes': (2048, 1024, 512, 256, 64),
         'params': {
             'block': Bottleneck,
@@ -515,7 +515,7 @@ resnest_backbones = {
     },
     'resnest50_fast_2s2x40d': {
         'backbone': ResNeStBackbone,
-        'pretrained_settings': _get_pretrained_settings('resnest50_fast_1s1x64d'),
+        'pretrained_settings': _get_pretrained_settings('resnest50_fast_2s2x40d'),
         'out_shapes': (2048, 1024, 512, 256, 64),
         'params': {
             'block': Bottleneck,
@@ -533,7 +533,7 @@ resnest_backbones = {
     },
     'resnest50_fast_4s2x40d': {
         'backbone': ResNeStBackbone,
-        'pretrained_settings': _get_pretrained_settings('resnest50_fast_1s1x64d'),
+        'pretrained_settings': _get_pretrained_settings('resnest50_fast_4s2x40d'),
         'out_shapes': (2048, 1024, 512, 256, 64),
         'params': {
             'block': Bottleneck,
@@ -551,7 +551,7 @@ resnest_backbones = {
     },
     'resnest50_fast_1s4x24d': {
         'backbone': ResNeStBackbone,
-        'pretrained_settings': _get_pretrained_settings('resnest50_fast_1s1x64d'),
+        'pretrained_settings': _get_pretrained_settings('resnest50_fast_1s4x24d'),
         'out_shapes': (2048, 1024, 512, 256, 64),
         'params': {
             'block': Bottleneck,
