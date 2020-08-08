@@ -16,10 +16,10 @@ class ArcMarginProduct(nn.Module):
             cos(theta + m)
         """
 
-    def __init__(self, in_features, out_features):
+    def __init__(self, in_features, out_features, extract_feature=False):
         super(ArcMarginProduct, self).__init__()
         self.weight = Parameter(torch.FloatTensor(out_features, in_features))
-        # nn.init.xavier_uniform_(self.weight)
+        self.extract_feature = extract_feature
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -28,5 +28,8 @@ class ArcMarginProduct(nn.Module):
 
     def forward(self, feats):
         # cosine = F.linear(F.normalize(feats), F.normalize(self.weight.cuda()))
-        cosine = F.linear(F.normalize(feats), F.normalize(self.weight.to(feats.device)))
-        return cosine
+        if self.extract_feature:
+            return feats
+        else:
+            cosine = F.linear(F.normalize(feats), F.normalize(self.weight.to(feats.device)))
+            return cosine

@@ -11,6 +11,7 @@ class SimpleHead(nn.Module):
                  p=0.2,
                  metric_branch=False,
                  last_activation=None,
+                 extract_feature=False,
                  pooling="ACP",
                  num_class=10):
         super(SimpleHead, self).__init__()
@@ -37,7 +38,7 @@ class SimpleHead(nn.Module):
             nn.Dropout(p))
 
         if metric_branch:
-            self.last_layer = ArcMarginProduct(1024, num_class)
+            self.last_layer = ArcMarginProduct(1024, num_class, extract_feature)
         else:
             self.last_layer = nn.Linear(1024, num_class)
         if last_activation is None:

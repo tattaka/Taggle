@@ -19,6 +19,7 @@ class JPUHead(nn.Module):
                  p=0.2,
                  pooling="ACP",
                  metric_branch=False,
+                 extract_feature = False,
                  last_activation=None,
                  num_class=10):
         super(JPUHead, self).__init__()
@@ -51,7 +52,7 @@ class JPUHead(nn.Module):
             nn.ReLU(inplace=True),
             nn.Dropout(p))
         if metric_branch:
-            self.last_layer = ArcMarginProduct(1024, num_class)
+            self.last_layer = ArcMarginProduct(1024, num_class, extract_feature)
         else:
             self.last_layer = nn.Linear(1024, num_class)
         if last_activation is None:
