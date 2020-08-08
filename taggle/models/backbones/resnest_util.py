@@ -106,7 +106,7 @@ class rSoftMax(nn.Module):
         return x
 
 
-_url_format = 'https://hangzh.s3.amazonaws.com/encoding/models/{}-{}.pth'
+_url_format = 'https://s3.us-west-1.wasabisys.com/resnest/torch/{}-{}.pth'
 
 _model_sha256 = {name: checksum for checksum, name in [
     ('d8fbf808', 'resnest50_fast_1s1x64d'),
