@@ -48,7 +48,7 @@ class Engine(BaseEngine):
                           losses["loss"], self.optimizers["default"])
 ```
 `Engine` class can process multiple models, loss, optimizer and scheduler in dict format.  
-If optimizer, criterion, model, and scheduler are not dict, they are converted to dict inside engine and "default" keys are assigned.  
+If `optimizer`, `criterion`, `model`, and `scheduler` are not dict, they are converted to dict inside engine and "default" keys are assigned.  
 You can also use the `Extension` class to perform additional processing such as logging.  
 `CSVLoggerExtension`, `TensorBoardExtension`, `LineNotifyExtension` have already been implemented.  
 The new processing can be implemented by inheriting the `BaseExtension` class.  
@@ -111,7 +111,7 @@ Get the major loss functions with dict format:
 ```yaml
 loss_fn:
     classification:
-        name: SmoothCrossEntropyLoss
+        type: SmoothCrossEntropyLoss
         params: 
             smoothing: 0.1
 ```
