@@ -38,8 +38,8 @@ def get_losses_dict(cfg: dict):
     criterions = {}
     for key in cfg:
         if cfg[key]["params"] is None:
-            criterions.update({key: get_loss(cfg[key]["name"])})
+            criterions.update({key: get_loss(cfg[key]["type"])})
         else:
             criterions.update(
-                {key: get_loss(cfg[key]["name"], **cfg[key]["params"])})
+                {key: get_loss(cfg[key]["type"], **cfg[key]["params"])})
     return criterions
