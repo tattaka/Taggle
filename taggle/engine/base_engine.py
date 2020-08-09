@@ -175,7 +175,7 @@ class BaseEngine(object):
         if self.valid_results["best_loss"] >= self.valid_results["loss"]:
             self.valid_results["best_loss"] = self.valid_results["loss"]
             self.save_checkpoint(metric="loss")
-        if (self.epoch % self.save_interval == 0) and self.epoch != 0 and self.save_interval > 0:
+        if ((self.epoch + 1) % self.save_interval == 0) and self.epoch != 0 and self.save_interval > 0:
             self.save_checkpoint()
         self.lr = {}
         for key in self.optimizers:
