@@ -43,16 +43,20 @@ class BaseEngine(object):
                  calc_metrics_mode: str = "epoch",
                  requierd_eval_data: List[str] = None,
                  extensions: list = None,
-                 static_data=None):
+                 static_data=None,
+                 **kwargs):
         '''
         If optimizer, criterion, model, and scheduler are not dict,
         they are converted to dict inside engine and default keys are assigned.
         '''
+        for key, value in kwargs.items():
+            setattr(self, key, value)
         self.models = helper_functions.input2dict(models, "default")
         self.schedulers = helper_functions.input2dict(schedulers, "default")
         self.optimizers = helper_functions.input2dict(optimizers, "default")
         self.criterions = helper_functions.input2dict(criterions, "default")
         self.static_data = static_data
+
         if device_ids is None:
             self.device_ids = list(range(torch.cuda.device_count()))
             self.device = torch.device(
