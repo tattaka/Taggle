@@ -8,28 +8,24 @@ from torch import nn
 class ArcFaceLoss(nn.Module):
     __name__ = 'ArcFaceLoss'
 
-    def __init__(self, s=30, margin=0.5, easy_margin=True):
+    def __init__(self, s=30, margin=0.5, easy_margin=True, reduction="mean"):
         super().__init__()
         self.m = margin
         self.s = s
-        nn.init.xavier_uniform_(self.weight)
         self.easy_margin = easy_margin
         self.cos_m = math.cos(self.m)
         self.sin_m = math.sin(self.m)
         self.th = math.cos(math.pi - self.m)
         self.mm = math.sin(math.pi - self.m) * self.m
-        self.criterion = nn.CrossEntropyLoss()
+        self.criterion = nn.CrossEntropyLoss(reduction=reduction)
 
-    # input [batch, embed_size],weight [embed_size, class_number]
     def forward(self, logits, labels):
-        # --------------------------- cos(theta) & phi(theta) ---------------------------
         sine = torch.sqrt(1.0 - torch.pow(logits, 2))
         phi = logits * self.cos_m - sine * self.sin_m
         if self.easy_margin:
             phi = torch.where(logits > 0, phi, logits)
         else:
             phi = torch.where(logits > self.th, phi, logits - self.mm)
-        # --------------------------- convert label to one-hot ---------------------------
         one_hot = torch.zeros(logits.size(), device='cuda')
         one_hot.scatter_(1, labels.view(-1, 1).long(), 1)
         output = (one_hot * phi) + ((1.0 - one_hot) * logits)

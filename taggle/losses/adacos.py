@@ -12,7 +12,7 @@ class AdaCosLoss(nn.Module):
         self.n_classes = num_classes
         self.s = math.sqrt(2) * math.log(num_classes - 1)
         self.m = m
-        self.classify_loss = nn.CrossEntropyLoss(reduction=reduction)
+        self.criterion = nn.CrossEntropyLoss(reduction=reduction)
 
     def forward(self, logits, labels):
         theta = torch.acos(torch.clamp(logits, -1.0 + 1e-7, 1.0 - 1e-7))
@@ -27,5 +27,5 @@ class AdaCosLoss(nn.Module):
             self.s = torch.log(
                 B_avg) / torch.cos(torch.min(math.pi / 4 * torch.ones_like(theta_med), theta_med))
         output = self.s * logits
-        loss = self.classify_loss(output, labels)
+        loss = self.criterion(output, labels)
         return loss
