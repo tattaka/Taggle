@@ -8,12 +8,10 @@ from torch import nn
 class ArcFaceLoss(nn.Module):
     __name__ = 'ArcFaceLoss'
 
-    def __init__(self, input_dim, output_dim, margin=0.5, easy_margin=True):
+    def __init__(self, s=30, margin=0.5, easy_margin=True):
         super().__init__()
         self.m = margin
-        self.s = 30
-        self.weight = nn.Parameter(
-            torch.FloatTensor(output_dim, input_dim)).cuda()
+        self.s = s
         nn.init.xavier_uniform_(self.weight)
         self.easy_margin = easy_margin
         self.cos_m = math.cos(self.m)
