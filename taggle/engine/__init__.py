@@ -5,3 +5,4 @@ from .standard_extensions import (
     LineNotifyExtension,
     TensorBoardExtension
 )
+from .lr_scheduler_extension import LRSchedulerExtension

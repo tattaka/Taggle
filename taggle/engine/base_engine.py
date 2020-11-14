@@ -24,7 +24,6 @@ class BaseEngine(object):
     def __init__(self,
                  models: Union[nn.Module, Dict[str, nn.Module]],
                  optimizers: Union[torch.optim.Optimizer, Dict[str, torch.optim.Optimizer]],
-                 schedulers: Union[torch.optim.lr_scheduler._LRScheduler, Dict[str, torch.optim.lr_scheduler._LRScheduler]],
                  criterions: dict,
                  output_dir: str,
                  save_metrics: List[str],
@@ -46,13 +45,13 @@ class BaseEngine(object):
                  static_data=None,
                  **kwargs):
         '''
-        If optimizer, criterion, model, and scheduler are not dict,
+        If optimizer, criterion and model are not dict,
         they are converted to dict inside engine and default keys are assigned.
         '''
         for key, value in kwargs.items():
             setattr(self, key, value)
         self.models = helper_functions.input2dict(models, "default")
-        self.schedulers = helper_functions.input2dict(schedulers, "default")
+        self.schedulers = None
         self.optimizers = helper_functions.input2dict(optimizers, "default")
         self.criterions = helper_functions.input2dict(criterions, "default")
         self.static_data = static_data
@@ -66,9 +65,9 @@ class BaseEngine(object):
             self.device = torch.device(f'cuda:{self.device_ids[0]}')
 
         if weights_path:
-            checkpoints = torch.load(weights_path)
+            self.init_checkpoints = torch.load(weights_path)
         else:
-            checkpoints = None
+            self.init_checkpoints = None
 
         self.train_loader = train_loader
         self.valid_loader = valid_loader
@@ -87,10 +86,10 @@ class BaseEngine(object):
         self.use_amp = use_amp
 
         if self.optimizers is not None:
-            self.initialize_models(opt_level, checkpoints, apply_fn)
-            self.initialize_optimizers(opt_level, checkpoints)
+            self.initialize_models(opt_level, apply_fn)
+            self.initialize_optimizers(opt_level)
         else:
-            self.initialize_models(opt_level, checkpoints, apply_fn)
+            self.initialize_models(opt_level, apply_fn)
         self.parallel_model()
         self.mode = "train"
         self.accumulation_steps = accumulation_steps
@@ -103,11 +102,11 @@ class BaseEngine(object):
         self.extensions = helper_functions.input2list(extensions)
         self.run_extensions("on_initialize")
 
-    def initialize_models(self, opt_level, checkpoints, apply_fn):
+    def initialize_models(self, opt_level, apply_fn):
         for key in self.models:
-            if checkpoints:
+            if self.init_checkpoints:
                 self.models[key].load_state_dict(
-                    checkpoints[key + "_model_state_dict"])
+                    self.init_checkpoints[key + "_model_state_dict"])
             self.models[key] = self.cuda(self.models[key], self.device)
             if self.use_amp and amp_enable and self.optimizers is None:
                 self.models[key], _ = amp.initialize(
@@ -121,19 +120,14 @@ class BaseEngine(object):
                 self.models[key] = nn.DataParallel(
                     self.models[key], device_ids=self.device_ids)
 
-    def initialize_optimizers(self, opt_level, checkpoints):
+    def initialize_optimizers(self, opt_level):
         for key in self.optimizers:
-            if self.schedulers is not None:
-                self.schedulers[key] = self.schedulers[key](
-                    self.optimizers[key])
             if self.use_amp and amp_enable:
                 self.models[key], self.optimizers[key] = amp.initialize(
                     self.models[key], self.optimizers[key], opt_level=opt_level)
-            if checkpoints:
+            if self.init_checkpoints:
                 self.optimizers[key].load_state_dict(
-                    checkpoints[key + "_optimizer_state_dict"])
-                self.schedulers[key].load_state_dict(
-                    checkpoints[key + "_scheduler_state_dict"])
+                    self.init_checkpoints[key + "_optimizer_state_dict"])
 
     def initialize_logger(self):
         self.train_results = {}
@@ -154,9 +148,6 @@ class BaseEngine(object):
         self.run_extensions("on_epoch_start")
         for key in self.models:
             self.models[key].train()
-        if self.schedulers is not None:
-            for key in self.schedulers:
-                self.schedulers[key].step()
 
         losses, metrics, outputs = self.epoch_stepper()
 

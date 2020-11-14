@@ -15,7 +15,8 @@ from taggle.engine import (
     BaseEngine,
     CSVLoggerExtension,
     LineNotifyExtension,
-    TensorBoardExtension
+    TensorBoardExtension,
+    LRSchedulerExtension
 )
 
 torch.backends.cudnn.benchmark = True
@@ -117,13 +118,12 @@ def main():
     model = Net()
     params = [{'params': model.parameters(), 'lr': args.lr}]
     optimizer = optim.Adadelta(params)
-    scheduler = partial(StepLR, step_size=1, gamma=args.gamma)
+    scheduler_extension = LRSchedulerExtension(scheduler_type="StepLR", step_size=1, gamma=args.gamma)
     criterion = nn.NLLLoss()
 
     engine = Engine(
         models=model,
         optimizers=optimizer,
-        schedulers=scheduler,
         criterions=criterion,
         output_dir="output/fold0",
         save_metrics=["acc-top1", "acc-top5"],
@@ -142,7 +142,7 @@ def main():
         calc_train_metrics=True,
         calc_metrics_mode="batch",
         requierd_eval_data=None,
-        extensions=[CSVLoggerExtension(), TensorBoardExtension(), LineNotifyExtension()])
+        extensions=[CSVLoggerExtension(), TensorBoardExtension(), LineNotifyExtension(), scheduler_extension])
 
     engine.repeated_run(args.epochs)
 
