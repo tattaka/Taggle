@@ -55,6 +55,10 @@ The new processing can be implemented by inheriting the `BaseExtension` class.
 
 For detail, please see [here](https://github.com/tattaka/Taggle/blob/master/example/train_mnist_example.py)
 
+#### Update(2020/11/14): 
+Separated lr schedulers implementation from engine.  
+Use the `LRSchedulerExtension` for new installations and updates of Taggle.  
+
 
 ### `ModelProvider` (Helper class for building computer vision models)
 It supports major backbone model and Heads used for classification and segmentation.   
