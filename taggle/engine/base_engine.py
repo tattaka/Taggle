@@ -462,6 +462,7 @@ class BaseEngine(object):
         if self.mode == "train":
             need_gradient_step = (
                 self.accumulation_counter + 1) % self.accumulation_steps == 0
+            loss = loss / self.accumulation_steps
             if self.use_amp and amp_enable:
                 delay_unscale = not need_gradient_step
                 with amp.scale_loss(loss, optimizer, delay_unscale=delay_unscale) as scaled_loss:
