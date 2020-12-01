@@ -96,9 +96,10 @@ Get the latest deep learning optimizers from the fork of [Best-Deep-Learning-Opt
 optimizer: 
     type: Adam
     params:
-        separate_head: True
         lr: 1.e-3
-        lr_e: 1.e-3
+        params_rule:
+            backbone: 1.e-4
+            heads: 1.e-3
 ```
 
 ```python
