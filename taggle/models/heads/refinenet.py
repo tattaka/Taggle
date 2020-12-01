@@ -184,13 +184,13 @@ class BaseRefineNetHead(nn.Module):
         if input_size % 32 != 0:
             raise ValueError("{} not divisble by 32".format(input_shape))
         self.layer1_rn = nn.Conv2d(
-            encoder_channels[3], features, kernel_size=3, stride=1, padding=1, bias=False)
+            encoder_channels[-4], features, kernel_size=3, stride=1, padding=1, bias=False)
         self.layer2_rn = nn.Conv2d(
-            encoder_channels[2], features, kernel_size=3, stride=1, padding=1, bias=False)
+            encoder_channels[-3], features, kernel_size=3, stride=1, padding=1, bias=False)
         self.layer3_rn = nn.Conv2d(
-            encoder_channels[1], features, kernel_size=3, stride=1, padding=1, bias=False)
+            encoder_channels[-2], features, kernel_size=3, stride=1, padding=1, bias=False)
         self.layer4_rn = nn.Conv2d(
-            encoder_channels[0], 2 * features, kernel_size=3, stride=1, padding=1, bias=False)
+            encoder_channels[-1], 2 * features, kernel_size=3, stride=1, padding=1, bias=False)
 
         self.refinenet4 = refinenet_block(2 * features,
                                           (2 * features, input_size // 32))
@@ -213,10 +213,10 @@ class BaseRefineNetHead(nn.Module):
                 bias=True))
 
     def forward(self, x):
-        layer_1_rn = self.layer1_rn(x[3])
-        layer_2_rn = self.layer2_rn(x[2])
-        layer_3_rn = self.layer3_rn(x[1])
-        layer_4_rn = self.layer4_rn(x[0])
+        layer_1_rn = self.layer1_rn(x[-4])
+        layer_2_rn = self.layer2_rn(x[-3])
+        layer_3_rn = self.layer3_rn(x[-2])
+        layer_4_rn = self.layer4_rn(x[-1])
         path_4 = self.refinenet4(layer_4_rn)
         path_3 = self.refinenet3(path_4, layer_3_rn)
         path_2 = self.refinenet2(path_3, layer_2_rn)

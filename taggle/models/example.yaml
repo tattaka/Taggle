@@ -2,7 +2,7 @@ model:
     backbone: 
         type: resnet18
         params:
-            backbone_weights: imagenet
+            pretrained: true
     heads:
         output1: 
             type: SimpleHead

@@ -244,20 +244,20 @@ class UNetHead(nn.Module):
         super().__init__()
 
         if center == 'normal':
-            channels = encoder_channels[0]
+            channels = encoder_channels[-1]
             self.center = CenterBlock(
                 channels, channels, use_batchnorm=use_batchnorm)
         elif center == 'fpa':
-            channels = encoder_channels[0]
+            channels = encoder_channels[-1]
             self.center = FPA(channels)
         elif center == 'aspp':
-            channels = encoder_channels[0]
+            channels = encoder_channels[-1]
             self.center = ASPP(channels, channels, dilations=[
                                1, (1, 6), (2, 12), (3, 18)])
         else:
             self.center = None
 
-        in_channels = self.compute_channels(encoder_channels, decoder_channels)
+        in_channels = self.compute_channels(encoder_channels[::-1], decoder_channels)
         out_channels = decoder_channels
 
         self.layer1 = DecoderBlock(in_channels[0], out_channels[0],
@@ -276,7 +276,7 @@ class UNetHead(nn.Module):
         self.classification = classification
         if self.classification:
             self.linear_feature = nn.Sequential(
-                nn.Conv2d(encoder_channels[0], 64, kernel_size=1),
+                nn.Conv2d(encoder_channels[-1], 64, kernel_size=1),
                 AdaptiveConcatPool2d(1),
                 Flatten(),
                 nn.Dropout(),
@@ -294,16 +294,16 @@ class UNetHead(nn.Module):
         return channels
 
     def forward(self, x):
-        encoder_head = x[0]
-        skips = x[1:]
+        encoder_head = x[-1]
+        skips = x[:-1]
 
         if self.center:
             encoder_head = self.center(encoder_head)
 
-        x = self.layer1([encoder_head, skips[0]])
-        x = self.layer2([x, skips[1]])
-        x = self.layer3([x, skips[2]])
-        x = self.layer4([x, skips[3]])
+        x = self.layer1([encoder_head, skips[-1]])
+        x = self.layer2([x, skips[-2]])
+        x = self.layer3([x, skips[-3]])
+        x = self.layer4([x, skips[-4]])
         x = self.layer5([x, None])
         x = self.final_conv(x)
         if self.classification:
@@ -327,20 +327,20 @@ class HyperColumnsHead(nn.Module):
         super().__init__()
 
         if center == 'normal':
-            channels = encoder_channels[0]
+            channels = encoder_channels[-1]
             self.center = CenterBlock(
                 channels, channels, use_batchnorm=use_batchnorm)
         elif center == 'fpa':
-            channels = encoder_channels[0]
+            channels = encoder_channels[-1]
             self.center = FPA(channels)
         elif center == 'aspp':
-            channels = encoder_channels[0]
+            channels = encoder_channels[-1]
             self.center = ASPP(inplanes=channels,
                                mid_c=channels / 2, dilations=[1, 6, 12, 18])
         else:
             self.center = None
 
-        in_channels = self.compute_channels(encoder_channels, decoder_channels)
+        in_channels = self.compute_channels(encoder_channels[::-1], decoder_channels)
         out_channels = decoder_channels
 
         self.layer1 = DecoderBlock(in_channels[0], out_channels[0],
@@ -393,22 +393,22 @@ class HyperColumnsHead(nn.Module):
         return channels
 
     def forward(self, x):
-        encoder_head = x[0]
-        skips = x[1:]
+        encoder_head = x[-1]
+        skips = x[:-1]
 
         if self.center:
             encoder_head = self.center(encoder_head)
 
-        x = self.layer1([encoder_head, skips[0]])
+        x = self.layer1([encoder_head, skips[-1]])
         xc = self.connect_conv1_2(F.interpolate(
             x, scale_factor=16, mode='nearest'))
-        x = self.layer2([x, skips[1]])
+        x = self.layer2([x, skips[-2]])
         xc = torch.cat((xc, self.connect_conv2_3(
             F.interpolate(x, scale_factor=8, mode='nearest'))), 1)
-        x = self.layer3([x, skips[2]])
+        x = self.layer3([x, skips[-3]])
         xc = torch.cat((xc, self.connect_conv3_4(
             F.interpolate(x, scale_factor=4, mode='nearest'))), 1)
-        x = self.layer4([x, skips[3]])
+        x = self.layer4([x, skips[-4]])
         xc = torch.cat((xc, self.connect_conv4_5(
             F.interpolate(x, scale_factor=2, mode='nearest'))), 1)
         x = self.layer5([x, None])
