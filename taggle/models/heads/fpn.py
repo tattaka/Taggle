@@ -81,11 +81,11 @@ class FPNHead(nn.Module):
 
         self.final_upsampling = final_upsampling
         self.conv1 = nn.Conv2d(
-            encoder_channels[0], pyramid_channels, kernel_size=(1, 1))
+            encoder_channels[-1], pyramid_channels, kernel_size=(1, 1))
 
-        self.p4 = FPNBlock(pyramid_channels, encoder_channels[1])
-        self.p3 = FPNBlock(pyramid_channels, encoder_channels[2])
-        self.p2 = FPNBlock(pyramid_channels, encoder_channels[3])
+        self.p4 = FPNBlock(pyramid_channels, encoder_channels[-2])
+        self.p3 = FPNBlock(pyramid_channels, encoder_channels[-3])
+        self.p2 = FPNBlock(pyramid_channels, encoder_channels[-4])
 
         self.s5 = SegmentationBlock(
             pyramid_channels, segmentation_channels, n_upsamples=3)
@@ -105,7 +105,7 @@ class FPNHead(nn.Module):
             segmentation_channels, num_class, kernel_size=1, padding=0)
 
     def forward(self, x):
-        c5, c4, c3, c2, _ = x
+        _, c2, c3, c4, c5 = x
 
         p5 = self.conv1(c5)
         p4 = self.p4([p5, c4])

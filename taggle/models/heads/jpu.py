@@ -24,8 +24,8 @@ class JPUHead(nn.Module):
                  num_class=10):
         super(JPUHead, self).__init__()
 
-        self.jpu = JPU([encoder_channels[0], encoder_channels[1],
-                        encoder_channels[2]], mid_channel)
+        self.jpu = JPU([encoder_channels[-1], encoder_channels[-2],
+                        encoder_channels[-3]], mid_channel)
         self.aspp = ASPP(mid_channel * 4, mid_channel,
                          dilations=[1, (1, 4), (2, 8), (3, 12)])
 
@@ -68,7 +68,7 @@ class JPUHead(nn.Module):
                 'Activation should be "LogSoftmax"/"Softmax"/"Sigmoid"/None')
 
     def forward(self, feats):
-        x = self.jpu(feats[0], feats[1], feats[2])
+        x = self.jpu(feats[-1], feats[-2], feats[-3])
         x = self.aspp(x)
         x = self.flatten(self.pooling(x))
         logits = self.dense_layers(x)

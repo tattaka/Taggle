@@ -56,26 +56,26 @@ class LinkNetHead(nn.Module):
         in_channels = encoder_channels
 
         self.layer1 = DecoderBlock(
-            in_channels[0], in_channels[1], use_batchnorm=use_batchnorm)
+            in_channels[-1], in_channels[-2], use_batchnorm=use_batchnorm)
         self.layer2 = DecoderBlock(
-            in_channels[1], in_channels[2], use_batchnorm=use_batchnorm)
+            in_channels[-2], in_channels[-3], use_batchnorm=use_batchnorm)
         self.layer3 = DecoderBlock(
-            in_channels[2], in_channels[3], use_batchnorm=use_batchnorm)
+            in_channels[-3], in_channels[-4], use_batchnorm=use_batchnorm)
         self.layer4 = DecoderBlock(
-            in_channels[3], in_channels[4], use_batchnorm=use_batchnorm)
+            in_channels[-4], in_channels[-5], use_batchnorm=use_batchnorm)
         self.layer5 = DecoderBlock(
-            in_channels[4], prefinal_channels, use_batchnorm=use_batchnorm)
+            in_channels[-5], prefinal_channels, use_batchnorm=use_batchnorm)
         self.final_conv = nn.Conv2d(
             prefinal_channels, num_class, kernel_size=(1, 1))
 
     def forward(self, x):
-        encoder_head = x[0]
-        skips = x[1:]
+        encoder_head = x[-1]
+        skips = x[:-1]
 
-        x = self.layer1([encoder_head, skips[0]])
-        x = self.layer2([x, skips[1]])
-        x = self.layer3([x, skips[2]])
-        x = self.layer4([x, skips[3]])
+        x = self.layer1([encoder_head, skips[-1]])
+        x = self.layer2([x, skips[-2]])
+        x = self.layer3([x, skips[-3]])
+        x = self.layer4([x, skips[-4]])
         x = self.layer5([x, None])
         x = self.final_conv(x)
 

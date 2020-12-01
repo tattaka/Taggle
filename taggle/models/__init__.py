@@ -1,6 +1,6 @@
 import torch
 
-from .backbones import backbones, get_backbone
+from .backbones import get_backbone
 from .base import BaseModel
 from .common import *
 from .heads import get_head, heads
@@ -11,7 +11,7 @@ from .sync_batchnorm import *
 #     backbone:
 #       type: resnet18
 #       params:
-#         backbone_weight: imagenet
+#         pretrained: true
 #     heads:
 #       output1:
 #         type: SimpleHead
@@ -34,18 +34,16 @@ from .sync_batchnorm import *
 
 class ModelProvider:
     def __init__(self):
-        self.backbones = backbones
         self.heads = heads
 
     def get_model(self, model_config: dict):
         backbone_cfg = model_config["backbone"]
         heads_cfg = model_config["heads"]
-        backbone = get_backbone(
-            self.backbones, backbone_cfg["type"], **backbone_cfg["params"])
+        backbone = get_backbone(backbone_cfg["type"], **backbone_cfg["params"])
         heads = {}
         for name in heads_cfg:
             heads.update({name: get_head(
-                self.heads, heads_cfg[name]["type"], heads_cfg[name]["params"], backbone.out_shapes)})
+                self.heads, heads_cfg[name]["type"], heads_cfg[name]["params"], backbone.feature_info.channels())})
         model = BaseModel(backbone, heads)
         if "mid_activation" in model_config:
             if model_config["mid_activation"] == "Mish":
