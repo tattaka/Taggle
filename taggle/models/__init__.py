@@ -11,7 +11,7 @@ from .sync_batchnorm import *
 #     backbone:
 #       type: resnet18
 #       params:
-#         backbone_weight: imagenet
+#         pretrained: true
 #     heads:
 #       output1:
 #         type: SimpleHead

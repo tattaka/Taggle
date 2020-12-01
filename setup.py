@@ -10,7 +10,7 @@ def _requires_from_file(filename):
 
 setup(
     name="taggle",
-    version="0.0.0",
+    version="0.1.0",
     # license="",
     description="A library that simplifies modeling and learning of image recognition in Pytorch",
     author="tattaka",
