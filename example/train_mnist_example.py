@@ -18,6 +18,7 @@ from taggle.engine import (
     TensorBoardExtension,
     LRSchedulerExtension
 )
+from taggle.optimizers import get_optimizer
 
 torch.backends.cudnn.benchmark = True
 
@@ -116,8 +117,7 @@ def main():
         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
     model = Net()
-    params = [{'params': model.parameters(), 'lr': args.lr}]
-    optimizer = optim.Adadelta(params)
+    optimizer = get_optimizer("Adadelta", model=model, lr=args.lr)
     scheduler_extension = LRSchedulerExtension(scheduler_type="StepLR", step_size=1, gamma=args.gamma)
     criterion = nn.NLLLoss()
 
