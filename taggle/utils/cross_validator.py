@@ -26,7 +26,7 @@ def stratified_group_kfold_cross_validator(df, target, group_target, n_splits=5,
     # https://www.kaggle.com/jakubwasikowski/stratified-group-k-fold-cross-validation
     groups = np.array(df[group_target].values)
     y = df[target].values
-    labels_num = np.max(groups) + 1
+    labels_num = np.max(y) + 1
     y_counts_per_group = defaultdict(lambda: np.zeros(labels_num))
     y_distr = Counter()
     for label, g in zip(y, groups):
