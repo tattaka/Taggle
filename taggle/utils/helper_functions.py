@@ -50,7 +50,7 @@ def concat_data(all_data: list):
             and type(elem).__name__ != 'string_':
         if type(elem).__name__ == 'ndarray':
             # array of string classes and object
-            return concat_data([b for b in all_data])
+            return np.concatenate(all_data)
         elif elem.shape == ():  # scalars
             return all_data
     elif isinstance(elem, float):
@@ -64,6 +64,7 @@ def concat_data(all_data: list):
         return {key: concat_data([d[key] for d in all_data]) for key in elem}
     elif isinstance(elem, container_abcs.Sequence):
         # [[[1, 2, 3, 4], [1, 2, 3, 4]], [[1, 2, 3, 4], [1, 2, 3, 4]]]
-        # -> [[1, 2, 3, 4, 5, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]]
-        transposed = zip(*all_data)
-        return [concat_data(samples) for samples in transposed]
+        # -> [[1, 2, 3, 4,] [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]]
+        result = []
+        [result.extend(d) for d in all_data]
+        return result

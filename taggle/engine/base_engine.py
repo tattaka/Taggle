@@ -239,11 +239,9 @@ class BaseEngine(object):
                 if self.calc_train_metrics and self.calc_metrics_mode == "epoch":
                     for key in batch_outputs:
                         if key in outputs.keys():
-                            outputs[key] = torch.cat(
-                                [outputs[key], batch_outputs[key].clone().detach().cpu()], dim=0)
+                            outputs[key] = helper_functions.concat_data([outputs[key], self.to_cpu(batch_outputs[key])])
                         else:
-                            outputs[key] = batch_outputs[key].clone(
-                            ).detach().cpu()
+                            outputs[key] = self.to_cpu(batch_outputs[key])
                 t.set_description("Epoch %i Training" % self.epoch)
                 print_losses = {}
                 for key in self.save_losses:
@@ -304,11 +302,9 @@ class BaseEngine(object):
                     if self.calc_metrics_mode == "epoch":
                         for key in batch_outputs:
                             if key in outputs.keys():
-                                outputs[key] = torch.cat(
-                                    [outputs[key], batch_outputs[key].clone().detach().cpu()], dim=0)
+                                outputs[key] = helper_functions.concat_data([outputs[key], self.to_cpu(batch_outputs[key])])
                             else:
-                                outputs[key] = batch_outputs[key].clone(
-                                ).detach().cpu()
+                                outputs[key] = self.to_cpu(batch_outputs[key])
                     t.set_description("Epoch %i Validation" % self.epoch)
                     print_losses = {}
                     for key in self.save_losses:
@@ -379,6 +375,18 @@ class BaseEngine(object):
                 checkpoint[key + "_scheduler_state_dict"] = self.schedulers[key].state_dict()
 
         torch.save(checkpoint, file_path)
+        
+    def to_cpu(self, x):
+        if isinstance(x, torch.Tensor) and x.device != "cpu":
+            return x.clone().detach().cpu()
+        elif isinstance(x, np.ndarray):
+            return x
+        elif isinstance(x, container_abcs.Mapping):
+            return {key: self.to_cpu(x[key]) for key in x}
+        elif isinstance(x, container_abcs.Sequence):
+            return [self.to_cpu(xi) for xi in x]
+        else:
+            return x
 
     def cuda(self, x, device=None):
         np_str_obj_array_pattern = re.compile(r'[SaUO]')
