@@ -3,7 +3,7 @@ from torch import nn
 from .adacos import AdaCosLoss
 from .arcface import ArcFaceLoss
 from .dice import DiceLoss
-from .focal import AutoFocalLoss, FocalLoss
+from .focal import AutoFocalLoss, FocalLoss, ReducedFocalLoss
 from .jaccard import JaccardLoss
 from .lovasz import BinaryLovaszHingeLoss, SoftmaxLovaszLoss
 from .ohem import OHEMLoss
@@ -21,6 +21,7 @@ losses.update({AdaCosLoss.__name__: AdaCosLoss})
 losses.update({DiceLoss.__name__: DiceLoss})
 losses.update({FocalLoss.__name__: FocalLoss})
 losses.update({AutoFocalLoss.__name__: AutoFocalLoss})
+losses.update({ReducedFocalLoss.__name__: ReducedFocalLoss})
 losses.update({JaccardLoss.__name__: JaccardLoss})
 losses.update({SoftmaxLovaszLoss.__name__: SoftmaxLovaszLoss})
 losses.update({BinaryLovaszHingeLoss.__name__: BinaryLovaszHingeLoss})
