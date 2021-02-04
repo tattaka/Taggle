@@ -142,7 +142,7 @@ def main():
         calc_train_metrics=True,
         calc_metrics_mode="batch",
         requierd_eval_data=None,
-        extensions=[CSVLoggerExtension(), TensorBoardExtension(), LineNotifyExtension(), scheduler_extension])
+        extensions=[CSVLoggerExtension(), TensorBoardExtension(), LineNotifyExtension(start_message=f"training start!\n""logdir: output/fold0"), scheduler_extension])
 
     engine.repeated_run(args.epochs)
 

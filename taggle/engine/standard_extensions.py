@@ -77,12 +77,19 @@ class TensorBoardExtension(BaseExtension):
 
 
 class LineNotifyExtension(BaseExtension):
-
+    def __init__(self, start_message=None):
+        self.line_token = os.environ["LINE_TOKEN"]
+        self.endpoint = "https://notify-api.line.me/api/notify"
+        if start_message is not None:
+            message = start_message
+            message = "\n{}".format(message)
+            payload = {"message": message}
+            headers = {"Authorization": "Bearer {}".format(self.line_token)}
+            requests.post(self.endpoint, data=payload, headers=headers)
+        
     def on_train_end(self, engine: BaseEngine):
         message = engine.result_info
-        line_token = os.environ["LINE_TOKEN"]
-        endpoint = "https://notify-api.line.me/api/notify"
         message = "\n{}".format(message)
         payload = {"message": message}
-        headers = {"Authorization": "Bearer {}".format(line_token)}
-        requests.post(endpoint, data=payload, headers=headers)
+        headers = {"Authorization": "Bearer {}".format(self.line_token)}
+        requests.post(self.endpoint, data=payload, headers=headers)
